@@ -7,10 +7,9 @@ var leftKey;
 
 // some parameters for our scene
 gameScene.init = function() {
-  this.playerSpeed = 1.5;
-  this.enemySpeed = 0;
-  this.enemyMaxY = 280;
-  this.enemyMinY = 80;
+  this.playerSpeed = 5;
+  this.enemyMaxY   = 330;
+  this.enemyMinY   = 30;
 }
 
 // load asset files for our game
@@ -36,7 +35,7 @@ gameScene.create = function() {
   this.player = this.add.sprite(40, this.sys.game.config.height / 2, 'player');
 
   // scale down
-  this.player.setScale(0.03);
+  this.player.setScale(.03);
 
   // goal
   this.treasure = this.add.sprite(this.sys.game.config.width - 80, this.sys.game.config.height / 2, 'treasure');
@@ -45,7 +44,7 @@ gameScene.create = function() {
   // group of enemies
   this.enemies = this.add.group({
     key: 'enemy',
-    repeat: 5,
+    repeat: 9,
     setXY: {
       x: 110,
       y: 100,
@@ -56,9 +55,9 @@ gameScene.create = function() {
    
   });
    //directions
-   upKey = gameScene.input.keyboard.addKey(38);
-   downKey = gameScene.input.keyboard.addKey(40);
-   leftKey = gameScene.input.keyboard.addKey(37);
+   upKey    = gameScene.input.keyboard.addKey(38);
+   downKey  = gameScene.input.keyboard.addKey(40);
+   leftKey  = gameScene.input.keyboard.addKey(37);
    rightKey = gameScene.input.keyboard.addKey(39);
    console.log(rightKey);
 
@@ -67,7 +66,7 @@ gameScene.create = function() {
 
   // set speeds
   Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
-    enemy.speed = Math.random() * 2;
+    enemy.speed = Math.random() * 2 + 1;
   }, this);
 
   // player is alive
@@ -95,13 +94,17 @@ gameScene.update = function() {
   }
 
   if(upKey.isDown){
-    this.player.y -= this.playerSpeed;
+    if(this.player.y >= this.enemyMinY ){
+      this.player.y -= this.playerSpeed;
+    }
   }
   if(downKey.isDown){
-    this.player.y += this.playerSpeed;
+    if(this.player.y <= this.enemyMaxY){
+      this.player.y += this.playerSpeed;
+    }
   }
 
-  // treasure collision
+  // Getting the A+
   if (Phaser.Geom.Intersects.RectangleToRectangle(this.player.getBounds(), this.treasure.getBounds())) {
     this.gameWon();
   }
@@ -149,7 +152,7 @@ gameScene.gameOver = function() {
   }, [], this);
 };
 gameScene.gameWon =function() {
-  window.alert("You Have Defeated Dr. Tommy! Refresh page to play again!");
+  window.alert("You Have Defeated The Evil Dr. Tommy! Refresh page to play again!");
 
 };
 
@@ -158,10 +161,10 @@ gameScene.gameWon =function() {
 // our game's configuration
 let config = {
   type: Phaser.AUTO,
-  width: 640,
+  width: 1000,
   height: 360,
   scene: gameScene
 };
-
+console.log(this.player);
 // create the game, and pass it the configuration
 let game = new Phaser.Game(config);
